@@ -1,4 +1,4 @@
-package utils;
+package utils.sorts.algs;
 
 public class MergeSort {
 
