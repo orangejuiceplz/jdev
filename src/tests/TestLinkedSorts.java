@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import types.LinkedList;
 
 import utils.array.ArrayUtils;
-import utils.linkedlists.LinkedListUtils;
 
 import java.util.Random;
 

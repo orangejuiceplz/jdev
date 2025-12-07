@@ -1,7 +1,5 @@
 package types;
 
-import static utils.sorts.SortUtils.*;
-
 public class LinkedList {
 
     Node head;
@@ -20,6 +18,7 @@ public class LinkedList {
         protected int getData() {
             return this.data;
         }
+
         protected void setNext(Node next) {
             this.next = next;
         }
@@ -51,6 +50,102 @@ public class LinkedList {
         }
         tail.setNext(newNode);
         tail = newNode;
+    }
+    /**
+     *
+     * inserts data at the given position
+     *
+     * @param position
+     * index to be inserted at
+     *
+     * @param data
+     * value to be inserted at position
+     *
+     */
+    public void insertAt(int position, int data) {
+        if (position < 0 || position > size) {
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
+
+
+        // if the position is at the end of the array, just call append since it's the same thing
+        if (position == size) {
+            append(data);
+            return;
+        }
+
+        Node newNode = new Node(data);
+
+        /*
+         * strategy:
+         *          1. if the position is at index 0, set new node's next node to HEAD
+         *          2. set head equal to the value of new Node
+         *          3. increase the size
+         */
+        if (position == 0) {
+            newNode.setNext(head);
+            head = newNode;
+            size++;
+            return;
+        }
+
+        Node current = head;
+
+        for (int i = 0; i < position - 1; i++) {
+            current = current.getNext();
+        }
+
+        newNode.setNext(current.getNext());
+        current.setNext(newNode);
+        size++;
+    }
+
+    /**
+     *
+     * deletes the specified index
+     *
+     * @param position
+     * index to delete
+     * @throws IndexOutOfBoundsException if either {@code position < 0} pr {@code position > size - 1}
+     */
+    public void deleteAt(int position) {
+
+
+        if (position < 0 || position > size - 1) {
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
+
+        // if the position is at the start, set head to the next element
+        // if the size is 1 (1 element), then set both head and tail to null since they point to the same value
+        if (position == 0) {
+            if (size == 1) {
+                head = null;
+                tail = null;
+            } else {
+                head = head.getNext();
+            }
+            size--;
+            return;
+        }
+        Node current = head;
+        for (int i = 0; i < position - 1; i ++) {
+            current = current.getNext();
+        }
+
+        // if the position is to delete the last element, set the next element to null and update tail to current
+        if (position == size - 1) {
+            current.setNext(null);
+            tail = current;
+            size--;
+            return;
+        }
+        // set currents next node to currents next, next node (so the middle next is dereferenced)
+        // e.g 4 -> 5 -> 6
+        //     4 X -> 5 X -> 6
+        //     4 -> 6
+        //     5 gets collected by java's garbage collection
+        current.setNext(current.getNext().getNext());
+        size--;
     }
 
     /**

@@ -28,6 +28,9 @@ public class TestLinkedLists {
 
         list.deleteAt(5);
         list.display();
+        System.out.println("----------------------------");
+        list.insertAt(5, 3);
+
 
 
     }
