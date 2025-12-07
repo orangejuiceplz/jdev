@@ -1,4 +1,4 @@
-package src.main;
+package main;
 
 import types.LinkedList;
 import java.util.Random;
@@ -14,7 +14,8 @@ public class TestLinkedLists {
         }
         list.display();
 
-        System.out.println("Appending 5, (testing tail)");
+        System.out.println("----------------------------");
+
         list.append(5);
         list.display();
 
@@ -22,6 +23,12 @@ public class TestLinkedLists {
 
         System.out.println(list.getSize());
         System.out.println();
+
+        System.out.println("----------------------------");
+
+        list.deleteAt(5);
+        list.display();
+
 
     }
 
