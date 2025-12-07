@@ -1,10 +1,7 @@
-package tests;
+package src.main;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import types.LinkedList;
 import java.util.Random;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TestLinkedLists {
 
@@ -17,11 +14,14 @@ public class TestLinkedLists {
         }
         list.display();
 
+        System.out.println("Appending 5, (testing tail)");
+        list.append(5);
+        list.display();
+
+        System.out.println("----------------------------");
+
         System.out.println(list.getSize());
         System.out.println();
-
-        list.sort();
-        list.display();
 
     }
 
