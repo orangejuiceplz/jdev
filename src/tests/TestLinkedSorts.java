@@ -3,24 +3,24 @@ package tests;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import types.LinkedList;
+import types.SinglyLinkedList;
 
 import utils.array.ArrayUtils;
 
 import java.util.Random;
 
-import static types.LinkedList.toArray;
+import static types.SinglyLinkedList.toArray;
 import static utils.linkedlists.LinkedListUtils.*;
 
 public class TestLinkedSorts {
 
-    LinkedList list;
+    SinglyLinkedList list;
     Random random;
 
     @BeforeEach
     void init() {
         random = new Random();
-        list = new LinkedList();
+        list = new SinglyLinkedList();
         for (int i = 0; i < 1000; i++) {
             list.append(random.nextInt(100000));
         }

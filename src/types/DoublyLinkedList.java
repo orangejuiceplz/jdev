@@ -1,34 +1,44 @@
 package types;
 
-public class LinkedList {
+public class DoublyLinkedList {
 
     Node head;
     Node tail;
-    private int size = 0;
+    int size = 0;
 
     private static class Node {
-        private int data;
-        private Node next;
+        int data;
+        Node next;
+        Node prev;
 
         public Node(int data) {
             this.data = data;
             this.next = null;
+            this.prev = null;
         }
 
-        protected int getData() {
+        public int getData() {
             return this.data;
         }
-
-        protected void setNext(Node next) {
-            this.next = next;
-        }
-        protected Node getNext() {
+        public Node getNext() {
             return this.next;
         }
-        protected void setData(int data) {
+        public Node getPrev() {
+            return this.prev;
+        }
+        public void setData(int data) {
             this.data = data;
         }
+        public void setNext(Node next) {
+            this.next = next;
+        }
+        public void setPrev(Node prev) {
+            this.prev = prev;
+        }
+    }
 
+    public int getSize() {
+        return this.size;
     }
 
     /**
@@ -39,7 +49,6 @@ public class LinkedList {
      * specified data value (int) to be added to the LinkedList
      *
      */
-
     public void append(int data) {
         Node newNode = new Node(data);
         size++;
@@ -49,8 +58,10 @@ public class LinkedList {
             return;
         }
         tail.setNext(newNode);
+        newNode.setPrev(tail);
         tail = newNode;
     }
+
     /**
      *
      * inserts data at the given position
@@ -84,6 +95,9 @@ public class LinkedList {
          */
         if (position == 0) {
             newNode.setNext(head);
+            if (head != null) {
+                head.setPrev(newNode);
+            }
             head = newNode;
             size++;
             return;
@@ -94,8 +108,19 @@ public class LinkedList {
         for (int i = 0; i < position - 1; i++) {
             current = current.getNext();
         }
+        /*
+         *  strategy:
+         *           1. connect newNode to neighbors
+         *           2. connect neighbors to newNode
+         *
+         */
+        Node nodeAfter = current.getNext();
+        newNode.setNext(nodeAfter);
+        newNode.setPrev(current);
 
-        newNode.setNext(current.getNext());
+        if (nodeAfter != null) {
+            nodeAfter.setPrev(newNode);
+        }
         current.setNext(newNode);
         size++;
     }
@@ -110,7 +135,6 @@ public class LinkedList {
      */
     public void deleteAt(int position) {
 
-
         if (position < 0 || position > size - 1) {
             throw new IndexOutOfBoundsException("Index out of bounds");
         }
@@ -123,28 +147,45 @@ public class LinkedList {
                 tail = null;
             } else {
                 head = head.getNext();
+                head.setPrev(null);
             }
             size--;
             return;
         }
+        // if the position is to delete the last element, just call deleteLast and return
+        if (position == size - 1) {
+            deleteLast();
+            return;
+        }
+
         Node current = head;
         for (int i = 0; i < position - 1; i ++) {
             current = current.getNext();
         }
+        Node nodeToDel = current.getNext();
+        Node nodeAfter = nodeToDel.getNext();
 
-        // if the position is to delete the last element, set the next element to null and update tail to current
-        if (position == size - 1) {
-            current.setNext(null);
-            tail = current;
+        current.setNext(nodeAfter);
+
+        if (nodeAfter != null) {
+            nodeAfter.setPrev(current);
+        }
+
+        size--;
+    }
+
+    public void deleteLast() {
+        if (tail == null) return;
+
+        if (head == tail) {
+            head = null;
+            tail = null;
             size--;
             return;
         }
-        // set currents next node to currents next, next node (so the middle next is dereferenced)
-        // e.g 4 -> 5 -> 6
-        //     4 X -> 5 X -> 6
-        //     4 -> 6
-        //     5 gets collected by java's garbage collection
-        current.setNext(current.getNext().getNext());
+
+        tail = tail.getPrev();
+        tail.setNext(null);
         size--;
     }
 
@@ -162,8 +203,13 @@ public class LinkedList {
         System.out.println("null");
     }
 
-    public int getSize() {
-        return this.size;
+    public void displayBackwards() {
+        Node current = tail;
+        while (current != null) {
+            System.out.println(current.getData() + " <-> ");
+            current = current.getPrev();
+        }
+        System.out.println("null {END}");
     }
 
     /**
@@ -184,11 +230,9 @@ public class LinkedList {
         return arr;
     }
 
-    public static int[] toArray(LinkedList list) {
+    public static int[] toArray(DoublyLinkedList list) {
         return list.toArray();
     }
-
-
 
     /**
      *
@@ -207,4 +251,27 @@ public class LinkedList {
             current = current.getNext();
         }
     }
+
+    /**
+     * reverses the linked list
+     * not very interesting
+     */
+    public void reverse() {
+        Node current = head;
+        Node temp = null;
+
+        while (current != null) {
+            temp = current.getPrev();
+            current.setPrev(current.getNext());
+            current.setNext(temp);
+            // next node is in previous so update current to that
+            current = current.getPrev();
+        }
+
+        if (temp != null) {
+            head = temp.getPrev();
+        }
+
+    }
+
 }

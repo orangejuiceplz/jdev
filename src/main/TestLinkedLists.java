@@ -1,12 +1,12 @@
 package main;
 
-import types.LinkedList;
+import types.SinglyLinkedList;
 import java.util.Random;
 
 public class TestLinkedLists {
 
     public static void main(String[] args) {
-        LinkedList list = new LinkedList();
+        SinglyLinkedList list = new SinglyLinkedList();
         Random random = new Random();
 
         for (int i = 0; i <5; i++) {
@@ -30,6 +30,14 @@ public class TestLinkedLists {
         list.display();
         System.out.println("----------------------------");
         list.insertAt(5, 3);
+        list.display();
+
+        System.out.println("----------------------------");
+
+        list.reverse();
+        list.display();
+
+        list.reverseDisplay();
 
 
 
