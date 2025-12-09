@@ -37,7 +37,7 @@ public class TestLinkedLists {
         list.reverse();
         list.display();
 
-        list.reverseDisplay();
+        // list.reverseDisplay();
 
 
 
