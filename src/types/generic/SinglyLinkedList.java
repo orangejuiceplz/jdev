@@ -11,67 +11,38 @@ public class SinglyLinkedList<T> {
 
     public void addFirst(T value) {
         Node<T> newNode = new Node<>(value);
-        if (head == null) {
-            size++;
-            head = newNode;
-            return;
-        }
         newNode.setNext(head);
         head = newNode;
         size++;
     }
 
     public void addLast(T value) {
-        Node<T> newNode = new Node<>(value);
-
-        if (head == null) {
-            head = newNode;
-            size++;
-            return;
-        }
-
-        Node<T> current = head;
-        while (current.getNext() != null) {
-            current = current.getNext();
-        }
-        current.setNext(newNode);
-        size++;
+        add(size, value);
     }
 
     public void add(int index, T value) {
-        if (index < 0 || index > size) throw new IndexOutOfBoundsException("Out of Bounds index");
+        checkBounds(index, size);
 
         if (index == 0) {
             addFirst(value);
             return;
         }
-        if (index == size) {
-            addLast(value);
-            return;
-        }
-
+        Node<T> previous = getNode(index - 1);
         Node<T> newNode = new Node<>(value);
-        Node<T> current = head;
-        for (int i = 0; i < index - 1; i++) {
-            current = current.getNext();
-        }
-        newNode.setNext(current.getNext());
-        current.setNext(newNode);
+
+        newNode.setNext(previous.getNext());
+        previous.setNext(newNode);
         size++;
     }
-
 
     public void append(T value) {
         addLast(value);
     }
 
     public T replace(int index, T value) {
-        if (index < 0 || index > size - 1) throw new IndexOutOfBoundsException("OBO");
+        checkBounds(index, size - 1);
 
-        Node<T> current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.getNext();
-        }
+        Node<T> current = getNode(index);
         T valOfReplaced = current.getValue();
         current.setValue(value);
         return valOfReplaced;
@@ -81,48 +52,26 @@ public class SinglyLinkedList<T> {
 
         Node<T> current = head;
         for (int i = 0; i < size; i++) {
-            boolean found;
-            if (value == null) {
-                found = (current.getValue() == null);
-            } else {
-                found = (current.getValue() != null && current.getValue().equals(value));
-            }
-            if (found) {
-                return i;
-            } else {
-                current = current.getNext();
-            }
+            if (isSafe(value, current.getValue())) return i;
+            current = current.getNext();
         }
-
         return -1;
     }
 
     public void remove(int index) {
-        if (index < 0 || index > size - 1) throw new IndexOutOfBoundsException("Index Out of Bounds");
-
+        checkBounds(index, size - 1);
         if (index == 0) {
             removeFirst();
             return;
         }
-        if (index == size - 1) {
-            removeLast();
-            return;
-        }
-        Node<T> current = head;
-
-        for (int i = 0; i < index - 1; i++) {
-            current = current.getNext();
-        }
-
-        // we're setting current to the next node's child
-
-        current.setNext(current.getNext().getNext());
+        Node<T> parent = getNode(index - 1);
+        Node<T> child = parent.getNext(); // or you can just do parent.setNext(parent.getNext().getNext()) ig
+        parent.setNext(child.getNext());
         size--;
     }
 
     public void removeFirst() {
         if (head == null) return;
-
         head = head.getNext();
         size--;
     }
@@ -131,43 +80,18 @@ public class SinglyLinkedList<T> {
         if (head == null) {
             return;
         }
-        if (size == 1) {
-            head = null;
-            size--;
-            return;
-        }
-
-        Node<T> current = head;
-        for (int i = 0; i < size - 2; i++) {
-            current = current.getNext();
-        }
-        current.setNext(null);
-        size--;
+        remove(size - 1);
     }
 
     public int removeValue(T value) {
-        if (head == null && value != null) return -1;
-        Node<T> current = head;
+        int index = search(value);
 
-        for (int i = 0; i < size; i++) {
-            T currentVal = current.getValue();
-            boolean found;
-
-            if (value == null) {
-                found = (currentVal == null);
-            } else {
-                found = value.equals(currentVal);
-            }
-
-            if (found) {
-                remove(i);
-                return i;
-            }
-            current = current.getNext();
+        if (index != -1) {
+            remove(index);
+            return index;
         }
         return -1;
     }
-
 
     public void display() {
         Node<T> current = head;
@@ -182,7 +106,20 @@ public class SinglyLinkedList<T> {
         return this.size;
     }
 
-
+    private Node<T> getNode(int index) {
+        Node<T> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        return current;
+    }
+    private void checkBounds(int index, int bound) {
+        if (index < 0 || index > bound) throw new IndexOutOfBoundsException("Index " + index + " out of bounds");
+    }
+    private boolean isSafe(T target, T currentValue) {
+        if (target == null) return (currentValue == null);
+        return target.equals(currentValue);
+    }
 
 
 }
