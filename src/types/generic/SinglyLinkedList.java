@@ -1,100 +1,151 @@
 package types.generic;
 
-public class SinglyLinkedList<T> {
+public class SinglyLinkedList<E> {
 
-    Node<T> head;
-    private int size;
+    private Node<E> head;
+    private int length;
 
     public SinglyLinkedList() {
-        // default because he wants it
+        // default
     }
 
-    public void addFirst(T value) {
-        Node<T> newNode = new Node<>(value);
+    public void addFirst(E data) {
+        Node<E> newNode = new Node<>(data);
         newNode.setNext(head);
         head = newNode;
-        size++;
+        length++;
     }
 
-    public void addLast(T value) {
-        add(size, value);
+    public void addLast(E data) {
+        Node<E> newNode = new Node<>(data);
+        if (head == null) {
+            head = newNode;
+            length++;
+            return;
+        }
+        Node<E> current = head;
+        while (current.getNext() != null) {
+            current = current.getNext();
+        }
+        current.setNext(newNode);
+        length++;
     }
 
-    public void add(int index, T value) {
-        checkBounds(index, size);
+    public void add(int index, E value) {
+        if (index < 0 || index > length) throw new IllegalArgumentException("Index out of bounds");
 
         if (index == 0) {
             addFirst(value);
             return;
         }
-        Node<T> previous = getNode(index - 1);
-        Node<T> newNode = new Node<>(value);
-
-        newNode.setNext(previous.getNext());
-        previous.setNext(newNode);
-        size++;
+        if (index == length) {
+            addLast(value);
+            return;
+        }
+        Node<E> newNode = new Node<>(value);
+        Node<E> current = head;
+        for (int i = 0; i < index - 1; i++) {
+            current = current.getNext();
+        }
+        newNode.setNext(current.getNext());
+        current.setNext(newNode);
+        length++;
     }
 
-    public void append(T value) {
-        addLast(value);
-    }
-
-    public T replace(int index, T value) {
-        checkBounds(index, size - 1);
-
-        Node<T> current = getNode(index);
-        T valOfReplaced = current.getValue();
-        current.setValue(value);
-        return valOfReplaced;
-    }
-
-    public int search(T value) {
-
-        Node<T> current = head;
-        for (int i = 0; i < size; i++) {
-            if (isSafe(value, current.getValue())) return i;
+    public int search(E value) {
+        Node<E> current = head;
+        for (int i = 0; i < length; i++) {
+            if (current.getValue().equals(value)) {
+                return i;
+            }
             current = current.getNext();
         }
         return -1;
     }
 
-    public void remove(int index) {
-        checkBounds(index, size - 1);
-        if (index == 0) {
-            removeFirst();
-            return;
-        }
-        Node<T> parent = getNode(index - 1);
-        Node<T> child = parent.getNext(); // or you can just do parent.setNext(parent.getNext().getNext()) ig
-        parent.setNext(child.getNext());
-        size--;
-    }
-
-    public void removeFirst() {
-        if (head == null) return;
+    public E removeFirst() {
+        if (head == null) return null;
+        E value = head.getValue();
         head = head.getNext();
-        size--;
+        length--;
+        return value;
     }
 
-    public void removeLast() {
-        if (head == null) {
-            return;
+    public E removeLast() {
+
+        if (head == null) return null;
+
+        E valOfRemoved;
+
+        if (length == 1) {
+            valOfRemoved = head.getValue();
+            head = null;
+            length--;
+            return valOfRemoved;
         }
-        remove(size - 1);
+
+        Node<E> current = head;
+        for (int i = 0; i < length - 2; i++) {
+            current = current.getNext();
+        }
+        valOfRemoved = current.getNext().getValue();
+        current.setNext(null);
+        length--;
+        return valOfRemoved;
     }
 
-    public int removeValue(T value) {
-        int index = search(value);
+    public E replace(int index, E value) {
+        if (index < 0 || index > length - 1) throw new IllegalArgumentException("Index out of bounds");
+        Node<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        E valOfReplace = current.getValue();
+        current.setValue(value);
+        return valOfReplace;
+    }
 
-        if (index != -1) {
-            remove(index);
+    public E remove(int index) {
+        if (index < 0 || index > length - 1) throw new IllegalArgumentException("Index out of bounds");
+        if (index == 0) {
+            return removeFirst();
+        }
+        if (index == length - 1) {
+            return removeLast();
+        }
+
+        Node<E> current = head;
+        for (int i = 0; i < index - 1; i++) {
+            current = current.getNext();
+        }
+        E valOfRemoved = current.getNext().getValue();
+        current.setNext(current.getNext().getNext());
+        length--;
+        return valOfRemoved;
+    }
+
+    public int removeVal(E value) {
+        int index = search(value);
+        if (index == -1) return -1;
+        if (index == length - 1) {
+            removeLast();
             return index;
         }
-        return -1;
+
+        Node<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        E valOfRemoved = current.getNext().getValue();
+        current.setNext(current.getNext().getNext());
+        length--;
+        return index;
     }
 
+
+    // temp
     public void display() {
-        Node<T> current = head;
+        Node<E> current = head;
         while (current != null) {
             System.out.print(current.getValue() + " -> ");
             current = current.getNext();
@@ -102,25 +153,7 @@ public class SinglyLinkedList<T> {
         System.out.println("null");
     }
 
-    public int getSize() {
-        return this.size;
+    public int size() {
+        return this.length;
     }
-
-    private Node<T> getNode(int index) {
-        Node<T> current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.getNext();
-        }
-        return current;
-    }
-    private void checkBounds(int index, int bound) {
-        if (index < 0 || index > bound) throw new IndexOutOfBoundsException("Index " + index + " out of bounds");
-    }
-    private boolean isSafe(T target, T currentValue) {
-        if (target == null) return (currentValue == null);
-        return target.equals(currentValue);
-    }
-
-
 }
-
